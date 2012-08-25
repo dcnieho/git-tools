@@ -8,3 +8,5 @@
 # To enable this hook, rename this file to "pre-commit".
 
 python git-tools/listDepRevs.py
+
+git add .dep_revs
