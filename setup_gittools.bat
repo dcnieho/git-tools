@@ -1,5 +1,9 @@
 @echo off
-xcopy pre-commit ..\.git\hooks /Y
+IF EXIST ..\.git\hooks (
+    xcopy pre-commit ..\.git\hooks /Y
+) ELSE (
+    echo !!you need to cope pre-commit by hand to .git/modules/^<module name^>/hooks
+)
 
 :: now cd to parent and add a git command to run script that sets all dependencies to expected version
 
