@@ -8,7 +8,7 @@ if os.path.isfile(depFile):
     print 'processing dependencies file: ' + os.path.normpath(depFile)
     depVersions = ''
 else:
-    exit(0)
+    exit(1)
 
 # loop over lines in file and request info for each
 f=open(depFile,'r')

@@ -7,6 +7,15 @@
 #
 # To enable this hook, rename this file to "pre-commit".
 
-python git-tools/listDepRevs.py
 
-git add .dep_revs
+
+command="python git-tools/listDepRevs.py"
+eval $command 
+ret_code=$? 
+if [ $ret_code == 0 ]; then
+  git add .dep_revs
+elif [ $ret_code != 1 ]; then
+  # 1 means no dependency list was found, so nothing to do, but no error
+  printf "Error : [%d] when trying to list this repo's dependencies" $ret_code 
+  exit $ret_code 
+fi 
