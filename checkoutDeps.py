@@ -23,23 +23,25 @@ for line in f:
         raise RuntimeError("repo does not exist: '%s'" % branchLoc)
     
     # now issue checkout/update/etc command
-    # detect if SVN
-    if os.path.isdir(os.path.join(branchLoc,'.svn')):
+    print '  checkout ' + args[0] + ' at rev. ' + args[2] + ' (%s)'%args[1]
+    # detect which VCS
+    if os.path.isdir(os.path.join(branchLoc,'.svn')) and args[1]=='SVN':
 	# run svn update
-	os.execlp("svn", "svn", "update", "-r%s"%args[2])
+	proc = subprocess.Popen(["svn", "update", "-r%s"%args[2]], cwd=branchLoc)
 	
-    elif os.path.isdir(os.path.join(branchLoc,'.bzr')):
+    elif os.path.isdir(os.path.join(branchLoc,'.bzr')) and args[1]=='BZR':
 	# run bzr 
-	os.execlp("bzr", "bzr", "revert", "-r%s"%args[2], "--no-backup")
+	proc = subprocess.Popen(["bzr", "revert", "-r%s"%args[2], "--no-backup"], cwd=branchLoc)
 
-    elif os.path.isdir(os.path.join(branchLoc,'.git')):
+    elif os.path.isdir(os.path.join(branchLoc,'.git')) and args[1]=='GIT':
 	# run subprocess to run git to get revision of branch
-        retcode = subprocess.Popen(["git", "checkout", args[2]], cwd=branchLoc)
-#	retcode = subprocess.call(["git", "--git-dir=\"%s\.git\""%branchLoc, "log"])
-	#retcode = subprocess.call(["git", "--git-dir=\"%s\.git\""%branchLoc, "--work-tree=\"%s\""%branchLoc, "checkout", "-q %s"%args[2]])
+        proc = subprocess.Popen(["git", "checkout", "-q", args[2]], cwd=branchLoc)
+    
+    proc.wait()
 
+    if proc.returncode==0:
+        print '    OK'
+    else:
+        raise RuntimeError('  UNSUCSESSFUL: checkout ' + args[0] + ' at rev. ' + args[2] + ' (%s)'%args[1])
 
-if retcode==0:
-    print '  checkout' + args[0] + ' at rev. ' + args[2] + ' (%s)'%args[1]
-else:
-    raise RuntimeError('  UNSUCSESSFUL: checkout' + args[0] + ' at rev. ' + args[2] + ' (%s)'%args[1])
+exit(0)

@@ -38,19 +38,19 @@ for line in f:
 	# svn branch
 	revNo = subprocess.Popen(["svnversion"], cwd=branchLoc, stdout=subprocess.PIPE).communicate()[0].strip()
 	print '  SVN: ' + line + ': rev. ' + revNo
-        dr.write(line + '\tSVN\t' + revNo)
+        dr.write(line + '\tSVN\t' + revNo + '\n')
 	
     elif os.path.isdir(os.path.join(branchLoc,'.bzr')):
 	# run subprocess to run bzr revno to get revision of branch
 	revNo = subprocess.Popen(["bzr", "revno"], cwd=branchLoc, stdout=subprocess.PIPE).communicate()[0].strip()
 	print '  BZR: ' + line + ': rev. ' + revNo
-	dr.write(line + '\tBZR\t' + revNo)
+	dr.write(line + '\tBZR\t' + revNo + '\n')
 
     elif os.path.isdir(os.path.join(branchLoc,'.git')):
 	# run subprocess to run git to get revision of branch
 	revNo = subprocess.Popen(["git", "log", "-1", "--pretty=format:%H"], cwd=branchLoc, stdout=subprocess.PIPE).communicate()[0].strip()
 	print '  GIT: ' + line + ': rev. ' + revNo
-	dr.write(line + '\tGIT\t' + revNo)
+	dr.write(line + '\tGIT\t' + revNo + '\n')
     
     else:
 	raise RuntimeError("cannot determine type of repo '%s'" % branchLoc)
