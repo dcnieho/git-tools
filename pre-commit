@@ -7,4 +7,4 @@
 #
 # To enable this hook, rename this file to "pre-commit".
 
-python dependency_revno.py
+python git-tools/listDepRevs.py
