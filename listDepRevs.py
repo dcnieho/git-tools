@@ -12,7 +12,7 @@ else:
 
 # loop over lines in file and request info for each
 f=open(depFile,'r')
-dr=open(".dep_revs", "w")
+dr=None
 for line in f:
     # check if line starts with *, this indicates that the
     # dependency is optional (not required on every system).
@@ -41,23 +41,30 @@ for line in f:
 	# run subprocess to run svnversion to get revision of
 	# svn branch
 	revNo = subprocess.Popen(["svnversion"], cwd=branchLoc, stdout=subprocess.PIPE).communicate()[0].strip()
-	print '  SVN: ' + line + ': rev. ' + revNo
-        dr.write(line + '\tSVN\t' + revNo + '\n')
+	CVS = 'SVN'
 	
     elif os.path.isdir(os.path.join(branchLoc,'.bzr')):
 	# run subprocess to run bzr revno to get revision of branch
 	revNo = subprocess.Popen(["bzr", "revno"], cwd=branchLoc, stdout=subprocess.PIPE).communicate()[0].strip()
-	print '  BZR: ' + line + ': rev. ' + revNo
-	dr.write(line + '\tBZR\t' + revNo + '\n')
+	CVS = 'BZR'
 
     elif os.path.isdir(os.path.join(branchLoc,'.git')):
 	# run subprocess to run git to get revision of branch
 	revNo = subprocess.Popen(["git", "log", "-1", "--pretty=format:%H"], cwd=branchLoc, stdout=subprocess.PIPE).communicate()[0].strip()
-	print '  GIT: ' + line + ': rev. ' + revNo
-	dr.write(line + '\tGIT\t' + revNo + '\n')
+	CVS = 'GIT'
     
     else:
 	raise RuntimeError("cannot determine type of repo '%s'" % branchLoc)
+    
+    # open file only here if so we don't have one if there's nothing to write
+    if dr is None:
+	dr = open(".dep_revs", "w")
+
+    print '  ' + CVS + ': ' + line + ': rev. ' + revNo
+    dr.write(line + '\t' + CVS + '\t' + revNo + '\n')
 
 f.close()
-dr.close()
+if dr is not None:
+    dr.close()
+else:
+    exit(1)	# signal no .dep_revs was created
