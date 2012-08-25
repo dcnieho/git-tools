@@ -24,6 +24,10 @@ for line in f:
     else:
 	qNotRequired = False
 	line = line[0:].strip() # strip whitespace
+    
+    # check line isn't empty
+    if not line:
+	continue
 
     # create branch location
     branchLoc = os.path.normpath(os.path.join(os.getcwd(),line))
