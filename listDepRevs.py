@@ -67,4 +67,5 @@ f.close()
 if dr is not None:
 	dr.close()
 else:
+	print '  empty...'
 	exit(1)	# signal no .dep_revs was created
