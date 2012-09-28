@@ -50,7 +50,10 @@ for line in f:
 
 	elif os.path.isdir(os.path.join(branchLoc,'.git')):
 		# run subprocess to run git to get revision of branch
-		revNo = subprocess.Popen(["git", "--git-dir", os.path.join(branchLoc,'.git'), "log", "-1", "--pretty=format:%H"], stdout=subprocess.PIPE).communicate()[0].strip()
+		revNo = subprocess.Popen(["git", "--git-dir", os.path.join(branchLoc,'.git'), "rev-parse", "HEAD"], stdout=subprocess.PIPE).communicate()[0].strip()
+		isDirty = subprocess.call(["git", "diff", "--quiet"], cwd=branchLoc)
+		if isDirty:
+			revNo += ' *DIRTY*'
 		CVS = 'GIT'
 	
 	else:
